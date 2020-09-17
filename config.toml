@@ -1,7 +1,7 @@
 ##########################################
 # Site Settings
 
-baseURL = "https://marginlon.github.io/"
+baseURL = "http://example.com/"
 title = "Margin"
 languageCode = "en"
 hasCJKLanguage = true

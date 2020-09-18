@@ -13,6 +13,12 @@ draft: false
           <!--<script src="../JS/index.js"></script>-->
     </head>
     <body>
-    <p>暂时留空，日后补充。</p>
+    <div class="contact-ways fade fade1 fade-in">
+					<h2>Contact Me</h2>
+					<ul>
+						<li>邮箱：<a target="_blank" href="mailto:hi@harryyu.me">Jialong_Lv@outlook.com</a></li>
+						<li>Github：<a target="_blank" href="https://github.com/MarginLon">@MarginLon</a></li>
+					</ul>
+				</div>
     </body>
 </html>

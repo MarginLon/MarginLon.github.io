@@ -3,7 +3,7 @@ title: "JavaScript 闭包作用域"
 date: 2020-09-20T09:02:39+08:00
 draft: false
 ---
-# 闭包作用域 
+# 闭包作用域
 ```js
 //2020/9/19
 //1.
@@ -35,17 +35,17 @@ A(1);
 A(2);
 ```
 ![闭包作用域](https://github.com/MarginLon/MarginPostImage/blob/master/%E5%87%BD%E6%95%B0%E9%97%AD%E5%8C%852.png?raw=true)
-    
+
 - 闭包特点
     + 函数执行形成私有context，context中的某些内容（一般堆内存地址）被context以外的事物（变量等）占用，则当前context不能被释放。
         * 保护：保护私有context的私有变量和外界互不影响
         * 保存：context的私有变量和值保存起来
         * 弊端：栈内存太大，影响性能，需合理利用
-- ```js
+```js
   var buttons = document.querySelectorAll('button');
   for (var i = 0; i < buttons.length; i++) {
     // i=0 buttons[0] 第一个按钮
-    // i=1 buttons[1] 第二个按钮 
+    // i=1 buttons[1] 第二个按钮
     // ....
     // 每一轮循环 i 变量的值 和 需要获取对应某个按钮的索引是一样的  buttons[i]
     buttons[i].onclick = function(){
@@ -72,7 +72,7 @@ A(2);
   for (var i = 0; i < buttons.length; i++) i{
        buttons[i].onclick = function(i){
         return function () {
-            console.log('获取当前按钮索引:${i}'); 
+            console.log('获取当前按钮索引:${i}');
             };
     })(i);
   }
@@ -91,7 +91,7 @@ A(2);
   let buttons = document.querySelectorAll('button');
   for (let i = 0; i < buttons.length; i++) i{
        buttons[i].onclick = function(){
-            console.log('获取当前按钮索引:${i}'); 
+            console.log('获取当前按钮索引:${i}');
             };
   }
 
@@ -102,7 +102,7 @@ A(2);
        buttons[i].myIndex = i;
        buttons[i].onclick = function(){
            // this -> 当前点击的按钮
-            console.log('获取当前按钮索引:${this.myIndex}'); 
+            console.log('获取当前按钮索引:${this.myIndex}');
        };
   }
 
@@ -114,7 +114,7 @@ A(2);
           targetTag = target.tagName;
       if(targetTag==="BUTTON"){
           var index = target.getAttribute('index');
-          console.log('获取当前按钮索引:${this.myIndex}'); 
+          console.log('获取当前按钮索引:${this.myIndex}');
       }
   };
 ```

@@ -27,7 +27,7 @@ draft: false
             - 函数执行的私有context
             - 块级作用域（私有context）
                 - 对象 function的大括号 判断，循环和代码块的大括号
-                - ```js
+                ```js
                     debugger;//开启断点调试,控制台基于F10/F11 逐过程/逐语句 控制执行
                     //代码块不会对n产生限制，n使全局context
                     {
@@ -48,6 +48,7 @@ draft: false
                     console.log(i);//5
                 ```
 # this
+
 ```js
 //函数执行主体：谁执行函数
 //函数执行context：在哪执行

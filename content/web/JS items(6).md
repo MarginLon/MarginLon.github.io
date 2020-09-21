@@ -547,7 +547,7 @@ alert(window.val + json.val);
 ```
 + 结果：
   - 24
-#### 1.
+#### 6.
 ```js
 (function () {
   var val = 1; 

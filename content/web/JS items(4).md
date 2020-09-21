@@ -16,6 +16,10 @@ draft: false
             - function 声明+定义
     - 全局context var相当于给GO增一个属性，一改随改；let和GO没有关系。
     - let不允许同context重复声明（不管先前何种方式声明，都不能let声明），var无所谓。
+    - var
+        + var：方法内局部，方法外全局
+        + 不加var：全局
+        + ![var](https://github.com/MarginLon/MarginPostImage/blob/master/var%E5%8F%98%E9%87%8F.png?raw=true)
     - 暂时性死区（暂存的Bug）
         + ```js
           console.log(typeof n);//undefined
@@ -92,7 +96,7 @@ fn(obj.sum);
 
 //
 setTimeout(function(){
-    console.log(this); //windiw
+    console.log(this); //window
 },1000);
 
 //

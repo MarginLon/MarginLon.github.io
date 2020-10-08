@@ -69,9 +69,18 @@ draft: false
      + {} + 0  左边{}视为代码块 //+0 => 0
      + （{} + 0）"[object Object]0"
      + 0 +{} "0[object Object]"
-
+  6. 对象数据类型=>数字/字符串
+      - 首先查找对象的Symbol.toPrimitive属性
+      - 不存在，调用valueOf获取原始值
+      - 没有，则再调用toString&Number转换
+  7. 特殊：
+      - alert([value]) => 字符串
+      - 模板字符串实现的是字符串拼接，对象会转换为字符串
+      - 其余数学运算，对象=>数字
+      - "=="比较，把对象转换成字符串或者数字
 ---
 - 变量提升:当前context(可理解为代码解析的一个环节)
+  + 全局context，基于var/function声明的变量，window设置对应的属性。
   + 当前dontext所有var/function关键字进行提前声明或定义
     - declare: ```var a;```
     - defined: ```a = 10;``` 

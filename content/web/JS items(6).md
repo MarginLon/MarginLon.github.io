@@ -32,7 +32,6 @@ console.log(a, b, c);
     - 第二行console.log是在```function fn(a){...}```内的，当```b=fn(10)```执行，此时```b,c```在全局context已经定义，函数fn中没有私有变量```b,c```，基于作用域链向上查找，而```a```是实参传递给形参得到10.
     - 第三行console.log是在```function fn(a){...}```内的，此时```a,c```被赋值100，200.
     - 第四行console.log是在```b=fn(10)```执行后，此时```a```作为全局context的```a```，值为12，```c```在函数fn中赋值```c=200;```得到200，最后fn没有形成闭包，堆内存被释放, b没有指向，故```undefined```
-
 #### 2.
 ```js
 var i = 0;
@@ -57,7 +56,7 @@ B();
     
   + 分析：
     - 第一个10，按照函数底层机制步骤推算。
-    - 第二个10，B()的私有变量i为20， y() => A的x()，x的作用域链使得B的私有变量i没有影响到console.log(i)的输出。<span style="color:red;">(存疑)</span>
+    - 第二个10，B()的私有变量i为20， y() => A的x()，x的作用域链使得B的私有变量i没有影响到console.log(i)的输出。<span style="color:red;">(正解：函数执行，上级作用域只和创建时的上级有关)</span>
 
 #### 3.
 ```js
@@ -67,7 +66,7 @@ var obj ={
 }
 function fn(){
    var a2 = a;
-   obj2 = obj;
+   obj2 = obj; // window.obj2 = obj;
    a2 =a;
    obj2.name ="jack";
 }
@@ -185,6 +184,8 @@ console.log(foo);
     
   + 分析：
     - [代码块提升解析](https://juejin.im/post/6844903955814694919)  
+    - (2020.9.28添加) 变量提升，当前context出现在非函数和对象的大括号中的function只声明不定义,代码执行时，大括号中出现了 function/let/const/，形成一个全新的块级私有context
+    - 代码执行，function X会把之前对function X的操作映射给全局。
 
 #### 8.
 ```js
@@ -217,12 +218,18 @@ func(5);
 console.log(x);
 ```
  + 结果:
-    - hello
-    - hello
-    - hello
+    - 2 1
+    - 3 1
+    - 4 1
     
   + 分析：
-    - ```'hello'||'world'```结果为```'hello'```
+    
+  + 补充：
+    - 形参赋值默认值
+    - 函数体中声明过变量，function的需要和形参中的一个一致。
+    - 满足以上两点触发机制：函数执行不仅形成私有context，而且会把函数当作一个块级私有context。如果块级私有context声明的变量在形参中出现，则也会把私有context中的形参变量赋值给块级context同名的变量一份。
+    - 触发后，私有context形参赋值后，接下来进入块级context处理。
+    - 如果块级的某个私有变量和当前context中的形参变量的名字一样，给块级context。（let/ const报错）
 
 ## 数据类型和基础知识
 ------
@@ -330,6 +337,8 @@ console.log(a);
   - <span style="color:red;">2</span>
 + 分析：
   - 错因：先return值再a++
++ 补充
+  ![闭包补充](https://github.com/MarginLon/MarginPostImage/blob/master/%E9%97%AD%E5%8C%85%E4%BD%9C%E4%B8%9A.png?raw=true)
 #### 4.
 ```js
 var test = (function (i) {
@@ -381,6 +390,8 @@ console.log(x, y);
   - <span style="color:red;">10 6</span>
 + 分析：
   - <span style="color:red;">存疑</span>
++ 补充：
+  ![闭包补充](https://github.com/MarginLon/MarginPostImage/blob/master/%E9%97%AD%E5%8C%85%E4%BD%9C%E4%B8%9A2.png?raw=true)
 #### 7.
 ```js
 function fun(n, o) {
@@ -414,6 +425,7 @@ c.fun(3);
  - 全局context var相当于给GO增一个属性，一改随改；let和GO没有关系。
  - let不允许同context重复声明（不管先前何种方式声明，都不能let再声明），var无所谓。
  - let产生块级私有context
+ - 暂时性死区(typeof)
 #### 10.
 ```js
 var b = 10;

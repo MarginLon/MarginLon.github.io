@@ -23,7 +23,7 @@ draft: false
         - 给对象设置唯一的属性
         - 在vuex/redux中做行为派发的时候，统一管理派发的行为标识，标识的值可以是唯一值。
         - Symbol.hasInstance
-        - Symbol.toPrimitive
+        - Symbol.toPrimitive ：
         - Symbol.toStringTag
         - Symbol.iterator
         - Symbol.isConcatSpreadable

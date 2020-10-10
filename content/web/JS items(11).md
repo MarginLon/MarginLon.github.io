@@ -64,3 +64,7 @@ switch(x){
     - continue
 - for (var key in obj){ }  
 --- 
+### DOM相关
+```js
+
+```

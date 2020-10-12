@@ -217,8 +217,8 @@ uglyURLs = false
         pre = "internal"
         post = ""
     [[menu.main]]
-        url = "/about/"
-        name = ""
+        url = "/base/"
+        name = "Base"
         weight = 5
         pre = "internal"
         post = ""

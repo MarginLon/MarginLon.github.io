@@ -57,7 +57,7 @@ function Fn() {
 Fn.prototype.say = function () {
     this.a = 2;
 }
-Fn.prototype = new Fn;// 存疑点
+Fn.prototype = new Fn;// 原型重定向
 let f1 = new Fn;
 ​
 Fn.prototype.b = function () {
@@ -129,13 +129,30 @@ Number.prototype.minus = function(n){
     return this-compute(n);
     }
 ```
+- 补充:
+```js
+const check = value => {
+    value = +value;
+    return isNaN(value) ? 0 : value;
+};
+Number.prototype.plus = function(value){
+    // this->n [对象数据类型]
+    value = check(value);
+    return this + value;
+}
+Number.prototype.minus = function(value){
+    // this->n [对象数据类型]
+    value = check(value);
+    return this - value;
+}
+```
 ---
 6.
 ```js
 /*
  * 编写queryURLParams方法实现如下的效果（至少两种方案）
  */
-let url="http://www.zhufengpeixun.cn/?lx=1&from=wx#video";
+let url="http://www.baidu.com";
 console.log(url.queryURLParams("from")); //=>"wx"
 console.log(url.queryURLParams("_HASH")); //=>"video"
 ```

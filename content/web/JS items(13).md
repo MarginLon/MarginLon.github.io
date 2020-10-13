@@ -218,6 +218,9 @@ let obj = {
     push: Array.prototype.push
 }
 obj.push(1);
+//this-> obj val-> 1
+// obj[this.length] = 1; => obj[2] = 1;
+// obj.length = 1;
 obj.push(2);
 console.log(obj);
 ```
@@ -232,6 +235,31 @@ if (a == 1 && a == 2 && a == 3) {
 ```
 - Answer: 
 ```js
+// 解析:
+// 解法1：利用对象转换为数字
+// 引用数据类型转换为数字
+// 1.Symbol.toPrimitive
+// 2.valueOf
+// 3.toString
+var a ={
+    i:0,
+    [Symbol.toPrimitive] () {
+        return ++this.i;
+    }
+};
+
+let a=[1,2,3];
+a.toString = arr.shift;
+
+//解法2：Object.defineProperty劫持数据
+var a = 0;
+var i = 0;
+Object.defineProperty(window,'a',{
+    get(){
+        // 1. console.log('OK');
+        // 2. return ++i;
+    }
+});
 ```
 ---
 10.
@@ -373,7 +401,7 @@ document.body.onclick = func.bind(obj,100,200);
 ```
 4. 
 ```js
-var name = '珠峰培训';
+var name = 'Margin ';
 function A(x,y){
     var res=x+y;
     console.log(res,this.name);

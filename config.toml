@@ -211,14 +211,14 @@ uglyURLs = false
         pre = "internal"
         post = ""
     [[menu.main]]
-        url = "/about/"
-        name = "About"
+        url = "/base/"
+        name = "Base"
         weight = 4
         pre = "internal"
         post = ""
     [[menu.main]]
-        url = "/base/"
-        name = "Base"
+        url = "/about/"
+        name = "About"
         weight = 5
         pre = "internal"
         post = ""

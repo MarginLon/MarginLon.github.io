@@ -29,4 +29,5 @@ draft: false
 	```
 	+ Symbol.hasInstance原理
 		+ (\_\_proto\_\_)是否存在类原型
+			- ```arr.__proto__===Array.prototype // =```
 

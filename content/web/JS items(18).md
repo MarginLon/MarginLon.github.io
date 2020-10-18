@@ -147,7 +147,8 @@ draft: false
 
 	let p1 = new Promise(function(resolve, reject){
 		console.log(1); // ->(1)
-			resolve('OK'); // 修改状态和值，并通知基于Then注入的方法执行[问题:.Then还没执行，方法还没注入，不知道该通知谁来执行]
+			resolve('OK'); // 修改状态和值，
+			// 并通知基于Then注入的方法执行[问题:.Then还没执行，方法还没注入，不知道该通知谁来执行]
 			// 此时需要把通知方法执行的操作先保存起来 【放入到等待任务队列】 ->异步操作
 		console.log(2); // ->(2)
 	});
@@ -164,7 +165,8 @@ draft: false
 	let p1 = new Promise(resolve => {
 		setTimeout(()=>{
 			resolve('OK'); // -> 立即修改状态和值 同步
-			console.log(1); // ->(1) 说明无论是否基于then注入了方法，执行resolve/reject，通知对应注入方法执行的操作是异步操作，不立即执行，排入等待队列，其他处理完再通知对应方法执行
+			console.log(1); // ->(1) 说明无论是否基于then注入了方法，执行resolve/reject，
+							// 通知对应注入方法执行的操作是异步操作，不立即执行，排入等待队列，其他处理完再通知对应方法执行
 		},1000);
 	});
 	p1.then(result => {
@@ -175,8 +177,10 @@ draft: false
 	// 1.new Promise
 		// executor resolve/reject执行控制其状态及值 执行失败控制报错
 	// 2. .then返回的新实例
-		// .then注入的两个方法无论哪个执行，只要不报错，新实例的状态即"fulfilled"；只要执行报错，新实例的状态就是rejected;且新实例的[[Result]]是方法返回的值
-		// 但如果方法执行返回的是一个新的promise实例，则此实例最后的成功或者失败，直接决定.then返回实例的成功和失败，得到的结果是一样的。
+		// .then注入的两个方法无论哪个执行，只要不报错，新实例的状态即"fulfilled"；
+		// 只要执行报错，新实例的状态就是rejected;且新实例的[[Result]]是方法返回的值
+		// 但如果方法执行返回的是一个新的promise实例，则此实例最后的成功或者失败，
+		// 直接决定.then返回实例的成功和失败，得到的结果是一样的。
 
 	let p1 = Promise.resolve('OK');
 	let p2 = p1.then(result => {
@@ -249,7 +253,8 @@ draft: false
 		console.log('成功->',result); // ->成功 'OK' 
 	});
 
-	// 存放多个成功，最后一个THEN存放失败，无论某一次失败导致promise实例状态是失败的，都会顺延到最后一个失败的处理函数上进行处理
+	// 存放多个成功，最后一个THEN存放失败，无论某一次失败导致promise实例状态是失败的，
+	// 都会顺延到最后一个失败的处理函数上进行处理
 	//  + then(null,return => {...}) 用 catch(reason=>{...}) 代替
 	Promise.reject('NO')
 	.then(result => {

@@ -36,7 +36,8 @@ draft: false
 		 };
 
 		 // 克隆3：assign 【浅】
-		 // 原理 Object.assign([obj1],[obj2]); => 返回结果仍是obj1堆内存，只不过是把obj2中的键值对和obj1的键值对合在一起
+		 // 原理 Object.assign([obj1],[obj2]); 
+		 // => 返回结果仍是obj1堆内存，只不过是把obj2中的键值对和obj1的键值对合在一起
 		 let obj = Object.assign({},obj1);
 		
 		 // 克隆4：自定义浅克隆
@@ -53,14 +54,16 @@ draft: false
 		 function shallowClone(obj) {
 			 // 处理其他
 			 let type = toType(obj);
-			 if (/^(number|string|boolean|null|undefined|symbol|bigint)$/.test(type)) return obj;
+			 if (/^(number|string|boolean|null|undefined|symbol|bigint)$/
+			 .test(type)) return obj;
 			 if (/^function$/.test(type)) {
 				 // 返回一个不同的函数，但是最后执行的效果和原始函数一直
 				 return function proxy () {
 					 return obj();
 				 };
 			 }
-			 if (/^(regexp|date|error)$/.test(type)) return new obj.constructor(obj);
+			 if (/^(regexp|date|error)$/.test(type)) 
+			 	return new obj.constructor(obj);
 
 			 // ..只处理数组或对象
 			 let keys = getOwnPropertys(obj),
@@ -82,7 +85,9 @@ draft: false
 		 // 克隆1：JSON.stringfy / JSON.parse
 
 		 // 原理：基于JSON.stringfy把原对象（数组）变为字符串，再基于JSON.parse把字符串转化为对象或者数组。
-		 // 问题：1.正则，Math，ArrayBuffer对象 => 空对象； 2.函数/Symbol/undefined属性值的属性 => 消失；  3. BigInt => 不能处理； 4. Date => String 
+		 // 问题：1.正则，Math，ArrayBuffer对象 => 空对象； 
+		 //      2.函数/Symbol/undefined属性值的属性 => 消失；  
+		 //      3. BigInt => 不能处理； 4. Date => String 
 		 let obj2 = JSON.parse(JSON.stringfy(obj1));
 
 		 // 克隆2：自定义深克隆

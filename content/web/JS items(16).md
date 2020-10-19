@@ -9,7 +9,6 @@ draft: false
 	+ instaceof
 	+ constructor
 	+ Object.prototype.toString.call
-- CSS
 # 数据类型检测底层机制
 + typeof 
 	+ 返回结果为字符串
@@ -18,7 +17,7 @@ draft: false
 	+ 无法细分普通或数组等对象，一律为object
 + instanceof
 	+ 检测当前实例是否属于这个类 ```Array[Symbol.hasInstance](arr)```
-	+ 一般只用于对象的具体细分
+	+ 一般只用于对象的具体细分，认不清正则
 	+ 不能证明 ```xxx instaceof Object```是true就是普通对象
 	+ 无法应用到原始值类型检测
 	+ 改变了prototype的也不能判断
@@ -29,5 +28,19 @@ draft: false
 	```
 	+ Symbol.hasInstance原理
 		+ (\_\_proto\_\_)是否存在类原型
-			- ```arr.__proto__===Array.prototype // =```
+			- ```js
+				arr.__proto__===Array.prototype 
+				 // =>  arr instanceof Array : true
+			  ```
+			- ```js
+				arr.__proto__.__proto__===Object.prototype 
+				 // =>  arr instanceof Object : true
+			  ```
++ constructor
+	+ constructor可以被随意更改
+	+ 支持基本类型值
++ Object.prototype.toString.call([value])
+	+ 
+
+	
 

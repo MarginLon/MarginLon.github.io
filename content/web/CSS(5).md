@@ -41,10 +41,10 @@ draft: false
 - 居中
 - 多列
 - 全屏
+
+
 - 水平居中
-   - 文字
-   - 块
-   - 多个块
+   - 文字,块,多个块
    ```html
    <body>
       <div id="parent">
@@ -70,12 +70,18 @@ draft: false
 
    /* 方案4 */
    #parent{position:relative;}
-   #child{position:absolute;}
-   /*缺点：子元素脱离文档流，margin属性无效 */
+   #child{position:absolute;left:50%;transform:translateX(-50%)}
+   /*优点: 父元素是否脱离文档流，不影响子元素水平居中*/
+   /*缺点：兼容性 */
+
+   /* 方案5 */
+   #parent{display:flex; align-items:center;}
 
    </style>
 
    ```
+   - 小结
+      - 
 - 垂直居中
    ```html
    <body>

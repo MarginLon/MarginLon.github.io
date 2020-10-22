@@ -58,8 +58,8 @@ body或者body的⽗辈元素为考，那么定位参考对象是窗⼝。
 - 层叠等级
    - 同一个层叠上下文，它描述定义的是该层叠上下⽂中的层叠上下⽂元素在Z轴上的上下顺序。
 - 层叠顺序
-   - 正z <span style = "color:red">></span> z-index:auto | 0 <span style = "color:red">></span> inline/inline-blocke <span style = "color:red">></span> float <span style = "color:red">></span> block <span style = "color:red">></span> 负z <span style = "color:red">></span> 层叠上下文 background/border
-   - 装饰 <span style = "color:red">></span> 布局 <span style = "color:red">></span> 内容
+   - 正z <span style = "color:red">></span> z-index:auto | 0 <span style = "color:red">></span> inline/inline-block <span style = "color:red">></span> float <span style = "color:red">></span> block <span style = "color:red">></span> 负z <span style = "color:red">></span> 层叠上下文 background/border
+   -  内容 <span style = "color:red">></span> 布局 <span style = "color:red">></span> 装饰
 ---
 # 层叠上下文形成条件
 - 层叠上下文

@@ -8,4 +8,4 @@ draft: false
 ---
 # Promises/A+源码
 - [Promises/A+](https://promisesaplus.com/)
-- [CSS_JS_Repos/JS/PromiseAPLUS.js](#)
+- [CSS_JS_Repos/JS/PromiseAPLUS.js](https://github.com/MarginLon/CSS_JS_Repos/tree/main/JS)

@@ -1,6 +1,6 @@
 ---
 title: "JavaScript 同步异步编程和事件循环"
-date: 2020-10-20T20:02:39+08:00
+date: 2020-10-24T20:02:39+08:00
 draft: false
 ---
 # Content
@@ -32,4 +32,41 @@ draft: false
 - js渲染线程
     - 词法分析
     - 自上而下的代码分析为一个个任务，放在宏任务队列，词法分析完成，再执行。
-- 例子
+- 异步任务
+    * 宏任务
+        - 定时器
+        - 事件绑定
+        - AJAX/FETCH等创建的网络请求
+    * 微任务
+        - Promise:then/resolve(reject)通知注册的onfulfilled/onrejected方法执行
+        - async/await 
+            - async：让一个函数返回Promise实例，默认成功，除非本身就是返回一个Promise实例，结果则以返回实例为主
+            - await:
+                - 函数中如果需要使用await，则所在的函数必须基于async修饰
+                - await可以使异步的编程模拟出同步的效果
+                + await后面一般会放置一个Promise实例（其他正常值也是可以的）
+                + 等待Promise状态为成功后，获取成功的结果，并且执行函数体中await下面的代码
+                + ```js
+                    async function fn() {
+                    // 先执行handel，返回一个Promise实例
+                    //   + 接下来等待，等待Promise实例变成成功态「再此期间，函数体中await下面代码都不会执行」
+                    //   + 当状态变为成功，把成功的结果给result，继续执行下面代码
+                    let result = await handle();
+                    console.log(result); //=>1S后输出'OK'
+
+                    // 虽然await后面放置的是一个10,肯定算是成功的，但是await下面代码也不是立即执行的，也需要等，等待同步任务执行完
+                    //  => await本身是异步的(await下面的代码，需要等到await后面的Promise实例「不是实例也会当做实例来处理」变为成功，才会执行后面的代码)，模拟出来一个类似于同步的效果
+                    let n = await 10;
+                    console.log(n); //=>10
+
+                    // 如果await后面的Promise实例是失败的，则不再处理之前存放的微任务（也就是下面的代码）：因为没处理失败，浏览器抛出异常 Uncaught (in promise) NO  =>用try catch 解决
+                    try {
+                        let m = await Promise.reject('NO');
+                        console.log(m);
+                    } catch (err) {
+
+                    }
+                    }
+                    fn(); 
+                  ```
+-[实例](https://github.com/MarginLon/CSS_JS_Repos/blob/main/JS/eventQueue.js)

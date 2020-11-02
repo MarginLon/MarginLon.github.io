@@ -64,9 +64,4 @@ switch(x){
     - continue
 - for (var key in obj){ }  
 --- 
-### DOM相关
-- DOM0 VS DOM2
-    - DOM0 某个事件绑定一个方法 DOM2 某个事件绑定多个方法
-```js
 
-```

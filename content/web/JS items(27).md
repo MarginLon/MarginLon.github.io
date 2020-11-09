@@ -6,6 +6,7 @@ draft: false
 # Content
 - 前后端分离开发中的AJAX和HTTP
     - AJAX基础
+    - AXIOS
 ---
 ## AJAX基础
 - AJAX解决网页异步刷新
@@ -35,4 +36,6 @@ draft: false
         - 以5开头 500 服务器发生未知错误 503 超负荷 [一般是服务器问题]
     - XHR属性方法
 ---
+## AXIOS
+- 基础见纸笔
        

@@ -5,8 +5,8 @@ draft: false
 ---
 - [Abstract](#abstract)
 - [Basic Item](#basic-item)
-    - [$\color{#FFDAB9}{数据类型及转换}$](#colorffdab9数据类型及转换)
-    - [$\color{#8470FF}{数据类型}$](#color8470ff数据类型)
+  - [{数据类型及转换}](#数据类型及转换)
+    - [{数据类型}](#数据类型)
       - [原始值](#原始值)
         - [Undefined](#undefined)
         - [Null](#null)
@@ -17,7 +17,7 @@ draft: false
         - [Bigint](#bigint)
       - [引用类型](#引用类型)
         - [对象/函数（基于构造函数创造的实例）](#对象函数基于构造函数创造的实例)
-    - [$\color{#8470FF}{类型转换}$](#color8470ff类型转换)
+    - [{类型转换}](#类型转换)
       - [typeof](#typeof)
       - [其他=>Number](#其他number)
       - [其他=>String](#其他string)
@@ -25,7 +25,7 @@ draft: false
       - [==的规则](#的规则)
       - [对象=>字符串/数字](#对象字符串数字)
       - [其他](#其他)
-  - [<br/>](#)
+  - [堆栈内存及执行代码的步骤](#堆栈内存及执行代码的步骤)
 - [Example](#example)
 ---
 # Abstract
@@ -34,10 +34,10 @@ draft: false
 
 # Basic Item
 
-### $\color{#FFDAB9}{数据类型及转换}$
+## {数据类型及转换}
 <br/>
 
-### $\color{#8470FF}{数据类型}$
+### {数据类型}
 <br/>
 
 #### 原始值
@@ -60,7 +60,7 @@ draft: false
 | :----- | :---- | :----- | :--- | :---- | :------ | :--- |
 <br/>
 
-### $\color{#8470FF}{类型转换}$
+### {类型转换}
 <br/>
 
 #### typeof
@@ -143,6 +143,9 @@ draft: false
   - 0 + {} "0[object Object]"
 - 模板字符串实现的是字符串拼接，对象转换为字符串，其余数学运算，对象=>数字
 <br/>
+
+## 堆栈内存及执行代码的步骤
+
 ---
 
 # Example

@@ -36,11 +36,7 @@ A(2);
 ```
 ![闭包作用域](https://github.com/MarginLon/MarginPostImage/blob/master/%E5%87%BD%E6%95%B0%E9%97%AD%E5%8C%852.png?raw=true)
 
-- 闭包特点
-    + 函数执行形成私有context，context中的某些内容（一般堆内存地址）被context以外的事物（变量等）占用，则当前context不能被释放。
-        * 保护：保护私有context的私有变量和外界互不影响
-        * 保存：context的私有变量和值保存起来
-        * 弊端：栈内存太大，影响性能，需合理利用
+
 ```js
   var buttons = document.querySelectorAll('button');
   for (var i = 0; i < buttons.length; i++) {

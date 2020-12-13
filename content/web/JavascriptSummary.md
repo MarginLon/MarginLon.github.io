@@ -18,6 +18,11 @@ draft: false
       - [2.1.2.6. 对象=>字符串/数字](#2126-对象字符串数字)
       - [2.1.2.7. 其他](#2127-其他)
   - [2.2. {堆栈内存及执行代码的步骤}](#22-堆栈内存及执行代码的步骤)
+  - [2.3. {函数的底层执行机制}](#23-函数的底层执行机制)
+  - [2.4. {闭包机制}](#24-闭包机制)
+  - [2.5. {浏览器垃圾回收处理}](#25-浏览器垃圾回收处理)
+  - [2.6. {let&const&var}](#26-letconstvar)
+    - [2.6.1. let/var](#261-letvar)
 - [3. Example](#3-example)
 ---
 # 1. Abstract
@@ -137,10 +142,143 @@ draft: false
 - 模板字符串实现的是字符串拼接，对象转换为字符串，其余数学运算，对象=>数字
 <br/>
 
+----
+
 ## 2.2. {堆栈内存及执行代码的步骤}
 
----
+- 浏览器运行JS代码，提供了栈内存(Stack)以运行代码
+  - 栈内存是计算机内存分配的
+  - 执行环境栈 EC stack (execution context stack)
+    - EC(G) 全局执行上下文，全局代码执行
+      - VO(G) 全局变量对象[存储全局上下文中声明的变量]
+      - GO(global object) 全局对象 [window]
+    - EC(X) 某函数的执行上下文 
+  - 等号赋值
+    1. 创建值  
+    原始值类型的值，储存在栈内，对象数据类型单独开辟堆(Heap)内存
+    2. 声明变量  
+    把声明的变量存储到当前上下文的变量对象中，如EC(G)  
+    3. 赋值  
+    指针的指向
+  - 堆内存
+    - 赋予一个16进制地址，对象中的键值依次存储，内存地址放在栈中供变量引用。
+----
+## 2.3. {函数的底层执行机制}
+![函数底层机制](https://github.com/MarginLon/MarginPostImage/blob/master/%E5%87%BD%E6%95%B0%E5%BA%95%E5%B1%82%E6%9C%BA%E5%88%B6.png?raw=true)
 
+- 正常的函数创建 ```function fn(y){...}```
+- 匿名函数之函数表达式 ```var fn = function(y){...};```
+- 创建步骤：
+    1. 创建一个函数(值/对象)
+       1. 创建一个堆内存
+       2. 声明函数作用域scope(即哪个上下文)
+       3. 存储代码(字符串)
+       4. 16进制地址存入栈中以供引用
+    2. 声明一个变量fn (函数名也是变量名)
+    3. 关联
+- 执行步骤
+    1. 形成一个全新的私有context =>  EC(FN1)
+    2. AO(FN1)&emsp;进栈 （AO:ActiveObject 变量对象）
+    3. 初始化作用域链[Scope-chain]
+        - <当前自己的私有context，函数的作用域> => 链的右侧是当前context的“上级”context
+    4. 初始化this
+    5. 初始化arguments
+    6. 形参赋值：当前上下文声明一个形参变量，并传递实参值，非严格模式建立映射机制：集合中的每一项和对应的形参变量绑定（只在代码执行之前）。
+    7. 变量提升
+    8. 代码执行
+        - 变量：私有只操作自己，和外界无关；如果不是自己私有，则基于chain向context查找，是否为上级私有，如果不是，继续向上查找，直到EC(G)，即<span style="color:red">作用域链查找机制</span>
+    9. 出栈 or 不出栈
+---
+## 2.4. {闭包机制}
+![其他](https://github.com/MarginLon/MarginPostImage/blob/master/%E9%87%8A%E6%94%BE%E6%9C%BA%E5%88%B6.png?raw=true)
+- EC(FN)：
+    * 开辟的某个堆内存，被当前EC(FN)外的变量占用，此时当前context即EC(FN)不能被出栈释放
+    * 闭包：(大函数执行返回小函数只是其中一种形式)
+        - 函数执行产生一个私有context，保护内部私有变量不受污染。[保护]
+        - 有可能形成不被释放的context，私有变量和一些值被保存，可供下级context中调取使用。[保存]
+        - 闭包特点
+          * 保护：保护私有context的私有变量和外界互不影响
+          * 保存：context的私有变量和值保存起来
+          * 弊端：栈内存太大，影响性能，需合理利用
+---
+## 2.5. {浏览器垃圾回收处理}
+- GC：浏览器的垃圾回收机制（内存释放）
+    * 栈内存：
+        + 加载页面，形成全局context，只有页面关闭后，全局context释放
+        + 函数执行私有context，进栈执行；函数中代码执行完成，大部分情况，出栈释放。
+          + 特殊：如果当前context的某些内容（一般是一个堆），被context以外内容占用，则不能出栈释放。
+    * 堆内存
+        + （谷歌）：引用标记
+            - 浏览器在空闲或指定时间，查看所有堆内存，把没有被任何东西占用的堆内存释放。
+        + （IE低版本）：引用计数
+            - 创建了堆内存，被占用一次，则浏览器计数+1，取消占用计数-1，计数=0释放内存； => 某些情况导致计数混乱，出现“内存泄漏”
+    * 释放内存：
+        + x=null => 手动取消占用
+---
+## 2.6. {let&const&var}
+### 2.6.1. let/var
+- 传统声明变量：var function
+- ES6：let const import()
+- let VS const
+    - let 变量储值可改 
+    - const 赋值不能再与其他赋值关联
+- let VS var
+    - var 存在变量提升 let 不存在变量提升
+        + 变量提升：代码执行前“var/function”提前声明或定义
+            - var 只声明
+            - function 声明+定义
+            - EC(G):if 无论条件是否成立，都变量提升，新浏览器function只声明不定义。
+    - 全局context var相当于给GO增一个属性，一改随改；let和GO没有关系。
+    - let不允许同context重复声明（不管先前何种方式声明，都不能let声明,词法解析阶段），var无所谓。
+    - var
+        + var：方法内局部，方法外全局
+        + 不加var：全局
+        + ![var](https://github.com/MarginLon/MarginPostImage/blob/master/var%E5%8F%98%E9%87%8F.png?raw=true)
+    - 暂时性死区（基于typeof检测一个未被声明的变量，不会报错，结果是'undefined'）
+        + ```js
+          console.log(typeof n);//undefined
+          let n = 12;//使上一句报错 
+          ```
+    - let产生块级私有context
+        + context & 作用域
+            - 全局context
+            - 函数执行的私有context
+            - 块级作用域（私有context）
+                - 对象 function的大括号 判断，循环和代码块的大括号
+                ```js
+                    debugger;//开启断点调试,控制台基于F10/F11 逐过程/逐语句 控制执行
+                    //代码块不会对n产生限制，n使全局context
+                    {
+                        var n = 12;
+                        console.log(n);
+
+                        let m = 13;
+                    }
+                    console.log(n);
+                    console.log(m);// m is not defined
+
+
+                    let i = 0;//不产生块级context
+                    for (; i< 5;i++)
+                    {
+                        console.log(i);
+                    }
+                    console.log(i);//5
+                ```
+
+
+---
 # 3. Example
+1. 堆栈内存
+![例1堆栈内存](https://github.com/MarginLon/MarginPostImage/blob/master/%E4%BE%8B1%E5%A0%86%E6%A0%88%E5%86%85%E5%AD%98.png?raw=true)
+2. 闭包三题[e2~4](https://github.com/MarginLon/CSS_JS_Repos/blob/main/JS/%E5%B0%8F%E7%BB%83%E4%B9%A0/e2.js)
+
+<br/>
+
+![例3闭包相关](https://github.com/MarginLon/MarginPostImage/blob/master/%E4%BE%8B3%E9%97%AD%E5%8C%85%E7%9B%B8%E5%85%B3.png?raw=true)
+<br/>
+
+![例4闭包相关](https://github.com/MarginLon/MarginPostImage/blob/master/%E4%BE%8B4%E9%97%AD%E5%8C%85%E7%9B%B8%E5%85%B3.png?raw=true)
+<br/>
 
 ---

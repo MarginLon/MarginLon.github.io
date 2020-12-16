@@ -22,7 +22,9 @@ draft: false
   - [2.4. {闭包机制}](#24-闭包机制)
   - [2.5. {浏览器垃圾回收处理}](#25-浏览器垃圾回收处理)
   - [2.6. {let&const&var}](#26-letconstvar)
-    - [2.6.1. let/var](#261-letvar)
+  - [2.7. {this}](#27-this)
+  - [2.8. {面向对象编程}](#28-面向对象编程)
+  - [2.9. {原型&原型链}](#29-原型原型链)
 - [3. Example](#3-example)
 ---
 # 1. Abstract
@@ -53,9 +55,19 @@ draft: false
 <br/>
 
 - 对象/函数（基于构造函数创造的实例）
-  
-| Object | Array | RegExp | Date | Error | Set/Map | ...  |
-| :----- | :---- | :----- | :--- | :---- | :------ | :--- |
+  - 对象
+    - 普通、数组、正则
+    - 类数组对象
+    - prototype
+    - 实例对象
+    - 函数对象
+  - 函数
+    - 普通
+    - 构造[内置，自定义]
+    - 生成器
+    - 箭头
+    - 基于ES6快速为对象属性赋值函数的模式（QF）
+
 <br/>
 
 ### 2.1.2. {类型转换}
@@ -216,7 +228,7 @@ draft: false
         + x=null => 手动取消占用
 ---
 ## 2.6. {let&const&var}
-### 2.6.1. let/var
+
 - 传统声明变量：var function
 - ES6：let const import()
 - let VS const
@@ -265,13 +277,93 @@ draft: false
                     }
                     console.log(i);//5
                 ```
+---
 
+## 2.7. {this}
 
+---
+
+## 2.8. {面向对象编程}
+
+   + 对象，类，实例：
+        - 对象：泛指
+        - 类：细分“对象”，大类和小类
+            - 封装，继承，多态
+                - 封装：功能的代码封装，低耦合高内聚
+                - 继承：子承父
+                - 多态：函数重载（名字相同，传参的个数或类型不同，JS中不存在），重写（子写父的新方法）
+        - 实例：某个类中具体事物
+            + 独有特征
+            + 共有特征
+   + JS
+        - 内置类
+        - 自定义类（类都是“函数数据类型”）
+            + 函数执行的时候基于new执行即可“构造函数执行”
+                - 构造函数 VS 普通函数
+                    1. 构造函数执行，也形成私有context
+                    2. 创建context后，浏览器<span style="color:red">默认创建一个对象实例</span>，把当前Fn函数当作类（”构造函数“）
+                    3. 初始this，把this指向当前的实例对象。
+                    4. 执行完，return时
+                        - 没有return/return 基本数据类型值，浏览器默认把创建的实例对象返回
+                        - return 引用类型，返回自己的返回值。
+            + Fn VS Fn()：
+                * Fn代表函数本身（堆内存），Fn()函数执行，获取返回值。
+             + new Fn VS new Fn()：
+                * 执行，第一个不传递实参，第二个传递实参。 
+                * 优先级 19 VS 20
+            + JS创建值（实例）两种方案:
+              + 字面量
+              + 构造函数new 
+              + 对于对象和函数类型，无区别；<span style="color:red">对于原始值，字面量返回原始值类型，构造函数方式返回对象类型，但都是所属类的实例。</span> 
+              + Symbol和BigInt 不允许new ```Object()```
+            + 检测一个属性是否为当前对象的成员
+                - 属性名 in 对象：无论公私有，有就是true
+                - 对象.hasOwnProperty(属性名)：只有私有true
+            + 检测公有属性
+                ```js
+                function hasPubProperty(obj,attr){
+                  //弊端：既私有又公有
+                  return (attr in obj) && !obj.hasOwnProperty(attr);
+                }
+                ```
+            + 验证实例属于类 instanceof 
+              + ```1 instanceof Number // => false``` 
+            + 基于"for..in"循环遍历
+                + 优先遍历数字属性
+                + 不会遍历到Symbol
+                + 会把自己扩展到“类原型”上的公共属性方法也遍历 [可枚举的] ```if(!obj.hasOwnProperty(key)) break;//遍历到公共属性，停止遍历```
+                + Object.keys(obj):非Symbol私有属性 [数组]
+                + Object.getOwnPropertyNames(obj): 同上
+                + Object.getOwnPropertySymbols(obj):Symbol私有属性 [数组]
+                ```js
+                let keys = [...Object.keys(obj),...Object.getOwnPropertySymbols(obj)];
+                keys.forEach(key=> {
+                            console.log(`属性名:$(),属性值:$()`);.
+                });
+                ```
+             
+---
+## 2.9. {原型&原型链}
+- 函数数据类型内置prototype属性，属性值是一个对象(除Function.prototype是函数)，对象中存储属性和方法是供当前类所属实例调用的公共属性和方法
+    * 箭头函数&QF函数没有prototype
+    * 原型对象上有一个内置的属性 constructor（构造器），属性值是当前函数本身
+- 对象数据类型都具备：\_\_proto\_\_，属性值是当前实例所属类的原型prototype
+    * Object.protptype的\_\_proto\_\_值是null，Object是所有对象的“基类” 
+- 原型链查找机制
+    * f1.say
+      * 先找私有属性
+      * 没有，基于\_\_proto\_\_找所属类原型的公共属性方法
+      * 没有，基于原型对象的\_\_proto\_\_查找，直到Object.prototype
+    * f1.\_\_proto\_\_.say
+      * 跳过私有的，找所属类原型的公有属性方法
+      * Fn.prototype.say   
 ---
 # 3. Example
 1. 堆栈内存
 ![例1堆栈内存](https://github.com/MarginLon/MarginPostImage/blob/master/%E4%BE%8B1%E5%A0%86%E6%A0%88%E5%86%85%E5%AD%98.png?raw=true)
-2. 闭包三题[e2~4](https://github.com/MarginLon/CSS_JS_Repos/blob/main/JS/%E5%B0%8F%E7%BB%83%E4%B9%A0/e2.js)
+<br/>
+
+2. [闭包三题](https://github.com/MarginLon/CSS_JS_Repos/blob/main/JS/%E5%B0%8F%E7%BB%83%E4%B9%A0/e2.js)
 
 <br/>
 
@@ -280,5 +372,23 @@ draft: false
 
 ![例4闭包相关](https://github.com/MarginLon/MarginPostImage/blob/master/%E4%BE%8B4%E9%97%AD%E5%8C%85%E7%9B%B8%E5%85%B3.png?raw=true)
 <br/>
+
+3. [5个怪异行为](https://github.com/MarginLon/CSS_JS_Repos/blob/main/JS/%E5%B0%8F%E7%BB%83%E4%B9%A0/5%E4%B8%AA%E6%80%AA%E5%BC%82%E8%A1%8C%E4%B8%BA.js)
+<br/>
+
+4. 所有的类都是函数数据类型,所有的实例都是对象类型[但是有特殊性] 
+   ```js
+   console.log(typeof Object); //=>"function"
+   console.log(typeof Array);  //=>"function"
+
+   function sum(){} // => typeof sum ==="function"
+   let arr = [] // => Array实例 -> 数组，对象
+   let n = 10;
+   let m = new Number(10);
+   m.toFixed(2);  // '10.00'
+   n.toFixed(2);  // '10.00' 转为new Number(10)
+   n-10; // 0
+   m-10; // 0  浏览器把对象转成数字
+   ```
 
 ---

@@ -23,6 +23,11 @@ draft: false
   - [2.5. {浏览器垃圾回收处理}](#25-浏览器垃圾回收处理)
   - [2.6. {let&const&var}](#26-letconstvar)
   - [2.7. {this}](#27-this)
+    - [2.7.1. 事件绑定](#271-事件绑定)
+    - [2.7.2. 函数执行 [普通/成员访问/匿名函数/回调函数]](#272-函数执行-普通成员访问匿名函数回调函数)
+    - [2.7.3. 构造函数](#273-构造函数)
+    - [2.7.4. 箭头函数 [generator]](#274-箭头函数-generator)
+    - [2.7.5. call/apply/bind强制修改this指向](#275-callapplybind强制修改this指向)
   - [2.8. {面向对象编程}](#28-面向对象编程)
   - [2.9. {原型&原型链}](#29-原型原型链)
 - [3. Example](#3-example)
@@ -280,6 +285,25 @@ draft: false
 ---
 
 ## 2.7. {this}
+- 全局context: this -> window
+- 块级context: this -> 继承上级context(包括箭头函数)
+### 2.7.1. 事件绑定
+- DOM0: ```xxx.onxxx = function(){}```
+- DOM2:   
+    - ```xxx.addEventListener('xxx',function(){})```  
+    - ```xxx.attachEvent('onxxx',function(){})```
+- 给当前元素的某个事件行为绑定方法，当事件触发、方法执行，方法中的this是当前元素本身
+- 特殊性：attachEvent -> window
+```js
+  document.body.onclick = function () {
+    console.log(this);//body
+};
+```
+
+### 2.7.2. 函数执行 [普通/成员访问/匿名函数/回调函数]
+### 2.7.3. 构造函数
+### 2.7.4. 箭头函数 [generator]
+### 2.7.5. call/apply/bind强制修改this指向
 
 ---
 

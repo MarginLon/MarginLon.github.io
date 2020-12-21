@@ -301,6 +301,67 @@ draft: false
 ```
 
 ### 2.7.2. 函数执行 [普通/成员访问/匿名函数/回调函数]
+- 正常的普通函数执行：函数执行前是否有点，没有点，this即window（严格模式下undefined）；有点，谁点this谁
+- 匿名函数（自执行函数/回调函数）如果没有特殊处理，则this一般都是window/undefined
+  - 函数表达式：等同于普通函数或事件绑定
+  - 自执行函数
+  - 回调函数：一般是window/undefined，如果另外函数执行中特殊处理，特殊为主。
+  - 括号表达式：小括号中包含"多项"，取最后一项，但this受到影响（一般是window/undefined）
+```js
+function fn(){
+  console.log(this);
+}
+let obj = {
+  name: 'Margin',
+  fn
+  // fn: fn
+};
+
+fn(); //this->window
+obj.fn();// this -> obj
+(obj.fn)(); //this -> obj
+(10, obj.fn)(); // this -> window/undefined
+
+// 函数表达式
+var fn = function () {
+  console.log(this);
+};
+fn();
+
+// 自执行函数
+(function(x){
+  console.log(this); // this -> window/undefined
+  })(10);
+
+// 回调函数：把一个函数A作为实参，传递给另外一个执行的函数B [B执行中把A执行]
+function fn(callback) {
+  //callback -> 匿名函数
+  //callback(); -> window
+  callback.call(obj);  // this -> obj
+}
+fn(function(){
+  console.log(this);
+});
+
+// 
+let arr = [10,20,30];
+arr.forEach(function(item,index){
+    console.log(this); 
+    // obj 触发回调函数执行的时候,
+    // forEach内部把回调函数的this改为传递的第二个参数值obj
+},obj);
+
+//
+setTimeout(function(){
+    console.log(this); //window
+},1000);
+setTimeout(function(x){
+    console.log(this, x); //window 10
+},1000, 10);
+```
+
+
+
 ### 2.7.3. 构造函数
 ### 2.7.4. 箭头函数 [generator]
 ### 2.7.5. call/apply/bind强制修改this指向
@@ -415,4 +476,25 @@ draft: false
    m-10; // 0  浏览器把对象转成数字
    ```
 
+
+5. this  
+    ```js
+    var x = 3,
+        obj = {x:5};
+    obj.fn = (function(){
+      this.x *= ++x;
+      return function(y){
+          this.x *= (++x)+y;
+          console.log(x); 
+      }
+    })();
+    var fn = obj.fn;
+    obj.fn(6);
+    fn(4);
+    console.log(obj.x, x); 
+    // 13
+    // 234
+    // 95 234
+    // this.x *= (++x)+y; 后面是整体
+    ```
 ---

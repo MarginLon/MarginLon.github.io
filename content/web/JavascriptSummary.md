@@ -29,7 +29,8 @@ draft: false
     - [2.7.4. 箭头函数 [generator]](#274-箭头函数-generator)
     - [2.7.5. call/apply/bind强制修改this指向](#275-callapplybind强制修改this指向)
   - [2.8. {面向对象编程}](#28-面向对象编程)
-  - [2.9. {原型&原型链}](#29-原型原型链)
+  - [2.9. {变量提升}](#29-变量提升)
+  - [2.10. {原型&原型链}](#210-原型原型链)
 - [3. Example](#3-example)
 ---
 # 1. Abstract
@@ -428,7 +429,20 @@ setTimeout(function(x){
                 ```
              
 ---
-## 2.9. {原型&原型链}
+## 2.9. {变量提升}
+- 变量提升：在当前context，JS代码自上而下执行之前，浏览器提前处理（词法解析的一个环节）
+  - var/function 提前声明/定义
+  - 基于var/function 全局context 声明的变量映射到GO(window)一份，并随动。
+  - if 无论条件是否成立，都变量提升（条件中带function在新浏览器只提前声明，不提前赋值）
+  - ```js
+    var func = function AAA() {
+      // 函数表达式匿名函数“具名化”，不能外部访问
+      // 函数内部私有context会把名字作为context的变量
+      // AAA(); 递归调用 而非arguments.callee
+    }
+    ```
+---
+## 2.10. {原型&原型链}
 - 函数数据类型内置prototype属性，属性值是一个对象(除Function.prototype是函数)，对象中存储属性和方法是供当前类所属实例调用的公共属性和方法
     * 箭头函数&QF函数没有prototype
     * 原型对象上有一个内置的属性 constructor（构造器），属性值是当前函数本身
@@ -496,5 +510,30 @@ setTimeout(function(x){
     // 234
     // 95 234
     // this.x *= (++x)+y; 后面是整体
+    ```
+6. Hoisting
+    ```js
+    // 1. 
+    fn(); // 5
+    function fn(){console.log(1);}
+    fn(); // 5 
+    function fn(){console.log(2);}
+    fn(); // 5
+    var fn = function(){console.log(3);}
+    fn(); // 3
+    function fn(){console.log(4);}
+    fn(); // 3
+    function fn(){console.log(5);}
+    fn(); // 3
+
+    // 2. 
+    var foo = 1;
+    function bar() {
+      if (!foo){
+        var foo = 10;
+      }
+      console.log(foo); // 10
+    }
+    bar();
     ```
 ---

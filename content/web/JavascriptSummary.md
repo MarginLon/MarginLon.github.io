@@ -10,7 +10,7 @@ draft: false
       - [2.1.1.1. 原始值](#2111-原始值)
       - [2.1.1.2. 引用类型](#2112-引用类型)
     - [2.1.2. {类型转换}](#212-类型转换)
-      - [2.1.2.1. typeof](#2121-typeof)
+      - [2.1.2.1. typeof/instanceof/.constructor/toString.call](#2121-typeofinstanceofconstructortostringcall)
       - [2.1.2.2. 其他=>Number](#2122-其他number)
       - [2.1.2.3. 其他=>String](#2123-其他string)
       - [2.1.2.4. 其他=>布尔](#2124-其他布尔)
@@ -20,6 +20,7 @@ draft: false
   - [2.2. {堆栈内存及执行代码的步骤}](#22-堆栈内存及执行代码的步骤)
   - [2.3. {函数的底层执行机制}](#23-函数的底层执行机制)
   - [2.4. {闭包机制}](#24-闭包机制)
+    - [2.4.1. 闭包应用之循环事件绑定的N种解决办法](#241-闭包应用之循环事件绑定的n种解决办法)
   - [2.5. {浏览器垃圾回收处理}](#25-浏览器垃圾回收处理)
   - [2.6. {let&const&var}](#26-letconstvar)
   - [2.7. {this}](#27-this)
@@ -28,10 +29,17 @@ draft: false
     - [2.7.3. 构造函数](#273-构造函数)
     - [2.7.4. 箭头函数 [generator]](#274-箭头函数-generator)
     - [2.7.5. call/apply/bind强制修改this指向](#275-callapplybind强制修改this指向)
-  - [2.8. {面向对象编程}](#28-面向对象编程)
-  - [2.9. {变量提升}](#29-变量提升)
-  - [2.10. {原型&原型链}](#210-原型原型链)
-- [3. Example](#3-example)
+  - [2.8. {变量提升&块级作用域}](#28-变量提升块级作用域)
+  - [2.9. {JS高阶技巧}](#29-js高阶技巧)
+    - [2.9.1. 单例设计模式](#291-单例设计模式)
+    - [2.9.2. 惰性函数](#292-惰性函数)
+    - [2.9.3. 柯里化](#293-柯里化)
+    - [2.9.4. compose](#294-compose)
+  - [2.10. {防抖&节流}](#210-防抖节流)
+  - [2.11. {面向对象编程}](#211-面向对象编程)
+  - [2.12. {原型&原型链}](#212-原型原型链)
+- [3. Others](#3-others)
+  - [3.1. {&& ||}](#31--)
 ---
 # 1. Abstract
 
@@ -79,13 +87,16 @@ draft: false
 ### 2.1.2. {类型转换}
 <br/>
 
-#### 2.1.2.1. typeof
+#### 2.1.2.1. typeof/instanceof/.constructor/toString.call
 <br/>
 
 - 返回字符串
 - null -> 'object'
 - 实现CALL的对象[函数、箭头函数、生成器函数、构造函数] -> 'function'
 - 未实现CALL的对象 -> 'object'
+- [example] instanceof [class]
+- [example].constructor===[class]
+- Object.prototype.toString.call([val])
 <br/>
 
 #### 2.1.2.2. 其他=>Number
@@ -218,6 +229,87 @@ draft: false
           * 保护：保护私有context的私有变量和外界互不影响
           * 保存：context的私有变量和值保存起来
           * 弊端：栈内存太大，影响性能，需合理利用
+### 2.4.1. 闭包应用之循环事件绑定的N种解决办法
+```js
+  var buttons = document.querySelectorAll('button');
+  for (var i = 0; i < buttons.length; i++) {
+    // i=0 buttons[0] 第一个按钮
+    // i=1 buttons[1] 第二个按钮
+    // ....
+    // 每一轮循环 i 变量的值 和 需要获取对应某个按钮的索引是一样的  buttons[i]
+    buttons[i].onclick = function(){
+       console.log('获取当前按钮索引:${i}');
+       //不能实现
+    };
+  }
+
+  //方案1.1：基于“闭包”
+  // [每一轮循环都产生一个闭包，存储对应索引；
+  // 点击事件触发，执行对应函数，让其上级context闭包]
+  var buttons = document.querySelectorAll('button');
+  for (var i = 0; i < buttons.length; i++) {
+      // 每一轮循环形成一个闭包，存储私有变量i的值
+      //    + 自执行函数执行，产生EC(A) 私有形参i=0/1/2
+      //    + EC（A）中有个小函数,让全局buttons中的某一项占用创建的函数
+    (function(i) {
+       buttons[i].onclick = function(){
+        console.log('获取当前按钮索引:${i}');
+       };
+    })(i);
+  }
+
+  //方案1.2：
+   var buttons = document.querySelectorAll('button');
+  for (var i = 0; i < buttons.length; i++) i{
+       buttons[i].onclick = function(i){
+        return function () {
+            console.log('获取当前按钮索引:${i}');
+            };
+    })(i);
+  }
+  //方案1.2注解
+  var obj = { //返回值赋值给fn
+      fn: (function(){
+          console.log('大函数');
+          return function(){
+              console.log('小函数');
+          }
+      })()
+  };
+  obj.fn();//执行返回的小函数
+
+  //方案1.3 基于let也是闭包
+  let buttons = document.querySelectorAll('button');
+  for (let i = 0; i < buttons.length; i++) i{
+       buttons[i].onclick = function(){
+            console.log('获取当前按钮索引:${i}');
+            };
+  }
+
+  //方案2 自定义属性
+  var buttons = document.querySelectorAll('button');
+  for (var i = 0; i < buttons.length; i++) i{
+      // 每一轮循环给当前button设置自定义属性存索引
+       buttons[i].myIndex = i;
+       buttons[i].onclick = function(){
+           // this -> 当前点击的按钮
+            console.log('获取当前按钮索引:${this.myIndex}');
+       };
+  }
+
+  //方案3 事件委托 html <button index='i'></button>;
+  // 无论点击body中的谁，都会触发body的点击事件
+  // ev.target事件源：具体点击的是谁
+  document.body.onclick = function(ev) {
+      var target = ev.target
+          targetTag = target.tagName;
+      if(targetTag==="BUTTON"){
+          var index = target.getAttribute('index');
+          console.log('获取当前按钮索引:${this.myIndex}');
+      }
+  };
+```
+
 ---
 ## 2.5. {浏览器垃圾回收处理}
 - GC：浏览器的垃圾回收机制（内存释放）
@@ -369,7 +461,218 @@ setTimeout(function(x){
 
 ---
 
-## 2.8. {面向对象编程}
+
+## 2.8. {变量提升&块级作用域}
+- 变量提升：在当前context，JS代码自上而下执行之前，浏览器提前处理（词法解析的一个环节）
+  - var/function 提前声明/定义
+  - 基于var/function 全局context 声明的变量映射到GO(window)一份，并随动。
+  - if 无论条件是否成立，都变量提升（条件中带function在新浏览器只提前声明，不提前赋值）
+  - ```js
+    var func = function AAA() {
+      // 函数表达式匿名函数“具名化”，不能外部访问
+      // 函数内部私有context会把名字作为context的变量
+      // AAA(); 递归调用 而非arguments.callee
+    }
+    ```
+- 块级作用域
+  - [原文章](https://juejin.im/post/6844903955814694919)
+  - 块级作用域内默认变量
+    - 不带var，let，const，只有执行过定义的变量的代码后才可以访问，给window赋值属性，之前会报错
+    - 块内默认变量依旧是全局变量
+    - 没执行之前不可以访问
+  - 块级作用域函数声明
+    - 块内函数声明会提升到块顶部，也会在全局作用域用var声明一个同名的undefined变量
+    - 块外的全局同名变量的赋值时机是执行完块内函数声明语句
+    - 块内的函数声明每次执行的时候都会给全局那个同名的变量赋值一次，并且，只有执行那个定义函数声明的代码才会触发赋值，你写的函数声明就相当于setter,每执行一次就给外部的那个同名的变量赋值一次
+    - 如果块内同时有同名的函数声明和默认的变量声明，那给默认的变量赋值时其实相当于赋值给那个同名的函数，因为查找块内的作用域链时找到了,就不会往全局声明了。 
+---
+
+## 2.9. {JS高阶技巧}
+- 模块化编程
+  - 单例
+  - AMD require.js
+  - CMD sea.js [CommonJS]
+  - CommonJS node.js
+  - ES6Module
+### 2.9.1. 单例设计模式
+  - 对象：描述同一个事物的属性和方法，可防止全局污染
+    - Object实例
+    - “命名空间”
+    - window.xxx = xxx
+    - 闭包+单例 [早期模块化]
+### 2.9.2. 惰性函数
+   - 函数重构[闭包]
+   - ```js
+            function get_css(element,attr){
+                if ('getComputedStyle' in window) {
+                    get_css = function (element, attr) {
+                        return window.getComputedStyle(element)[attr];
+                    };
+                }
+                else {
+                     get_css = function (element, attr) {
+                        return element.currentStyle[attr];
+                };
+               }
+               return get_css(element, attr);
+            }
+            ```
+### 2.9.3. 柯里化
+   - （预先处理）形成一个闭包，存储信息，供下级context调用
+ ```js
+let res = fn(1,2)(3);
+console.log(res);//=>6 1+2+3
+
+//ToDo
+function fn() {
+    let outerArgs = Array.from(arguments); 
+    
+    return function annoymous(){
+        let innerArgs = Array.from(arguments);
+
+        let params = outerArgs.concat(innerArgs);
+        return params.reduce(function(result, item){
+            return result + item;
+        });
+    };
+}
+
+// ES6 ToDo
+
+//数组 reduce
+//     + arr.reduce([function])
+let arr = [10, 20, 30, 40];
+let result = arr.reduce(function (result, item, index){
+        console.log(result,item,index);
+        return result + item;
+});
+// 重构 reduce
+function reduce(arr, callback, initValue) {
+    let result = initValue,
+        i = 0;
+    if(typeof result=="undefined"){
+        result = arr[0];
+        i = 1;
+    }
+
+}
+let arr = [10, 20, 30, 40];
+let result = reduce(arr, function(result, item, index){
+    return result + item;
+});
+console.log(result);
+
+```
+### 2.9.4. compose
+   - f(g(h(x))) => compose(f,g,h)(x)
+```js 
+const compose = (...funcs) => {
+     return x => {
+        return funcs.reduceRight((result, item) =>{
+            //result->x item->add1
+            //result->add1(x) item->add1
+            return item(result);
+        }, x);
+     };
+ };
+
+```
+---
+## 2.10. {防抖&节流}
+- 自己规定频繁触发的条件
+- 防抖：只识别一次  --点击事件
+- 节流：降低触发频率，能识别‘多次’ --键盘 滚动条
+```js
+/*
+debounce:函数防抖
+  @params
+    func [funcion,required] : 最后要执行的函数
+    wait [number] 触发的频率时间
+    immediate [boolean] 设置是否开始边界触发
+  @return
+    func执行的返回结果
+*/
+function debounce (func, wait, immediate) {
+  if(typeof func!=="function") throw new TypeError('func must be an function');
+  if(typeof wait ==="boolean") {
+    immediate = wait;
+    wait = 300;
+  }
+  if(typeof wait !=="number") wait =300;
+  if(typeof immediate !=="boolean") immediate = false;
+
+  var timer = null;
+  return function proxy(...params){ 
+    //基于逻辑处理 让fn只执行一次
+    var runNow = !timer && immediate; 
+
+    if(timer) {clearTimeout(timer);}
+    timer = setTimeout(function(){
+      if(timer) {
+        clearTimeout(timer);
+        timer = null;
+      };
+      !immediate ?func(...params): null;
+    }, wait);
+    runNow?func(...params): null;
+  };
+}
+function fn(){
+  console.log('OK');
+}
+box.onclick = debounce(fn,300,true);
+
+
+/*
+throttle:函数节流
+  @params
+    func [funcion,required] : 最后要执行的函数
+    wait [number] 触发的频率时间
+  @return
+    func执行的返回结果
+*/
+function throttle(func, wait) {
+  if(typeof func!=="function") throw new TypeError('func must be an function');
+  if(typeof wait !=="number") wait =300;
+
+  var timer =null,
+      previous =0,
+      result;
+  
+  return function proxy(){ 
+    var now = +new Date(),
+        remaining = wait - (now - previous),
+        self = this,
+        params = [].slice.call(arguments);
+    if(remaining<=0){
+      if(timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
+      //立即执行
+      result = func.apply(self, params);
+      previous = +new Date();
+    } else if(!timer) {
+      // 没有达到间隔时间，之前没有设置过定时器，此时设置定时器，等待remaining后执行一次
+      timer =setTimeout(function(){
+        if(timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
+        result = func.apply(self, params);
+        previous = +new Date();
+      },remaining)
+    }
+    return result;
+  };
+}
+function fn(){
+  console.log('OK');
+}
+box.onclick = throttle(fn,500);
+```
+---
+## 2.11. {面向对象编程}
 
    + 对象，类，实例：
         - 对象：泛指
@@ -429,20 +732,7 @@ setTimeout(function(x){
                 ```
              
 ---
-## 2.9. {变量提升}
-- 变量提升：在当前context，JS代码自上而下执行之前，浏览器提前处理（词法解析的一个环节）
-  - var/function 提前声明/定义
-  - 基于var/function 全局context 声明的变量映射到GO(window)一份，并随动。
-  - if 无论条件是否成立，都变量提升（条件中带function在新浏览器只提前声明，不提前赋值）
-  - ```js
-    var func = function AAA() {
-      // 函数表达式匿名函数“具名化”，不能外部访问
-      // 函数内部私有context会把名字作为context的变量
-      // AAA(); 递归调用 而非arguments.callee
-    }
-    ```
----
-## 2.10. {原型&原型链}
+## 2.12. {原型&原型链}
 - 函数数据类型内置prototype属性，属性值是一个对象(除Function.prototype是函数)，对象中存储属性和方法是供当前类所属实例调用的公共属性和方法
     * 箭头函数&QF函数没有prototype
     * 原型对象上有一个内置的属性 constructor（构造器），属性值是当前函数本身
@@ -457,83 +747,23 @@ setTimeout(function(x){
       * 跳过私有的，找所属类原型的公有属性方法
       * Fn.prototype.say   
 ---
-# 3. Example
-1. 堆栈内存
-![例1堆栈内存](https://github.com/MarginLon/MarginPostImage/blob/master/%E4%BE%8B1%E5%A0%86%E6%A0%88%E5%86%85%E5%AD%98.png?raw=true)
-<br/>
-
-2. [闭包三题](https://github.com/MarginLon/CSS_JS_Repos/blob/main/JS/%E5%B0%8F%E7%BB%83%E4%B9%A0/e2.js)
-
-<br/>
-
-![例3闭包相关](https://github.com/MarginLon/MarginPostImage/blob/master/%E4%BE%8B3%E9%97%AD%E5%8C%85%E7%9B%B8%E5%85%B3.png?raw=true)
-<br/>
-
-![例4闭包相关](https://github.com/MarginLon/MarginPostImage/blob/master/%E4%BE%8B4%E9%97%AD%E5%8C%85%E7%9B%B8%E5%85%B3.png?raw=true)
-<br/>
-
-3. [5个怪异行为](https://github.com/MarginLon/CSS_JS_Repos/blob/main/JS/%E5%B0%8F%E7%BB%83%E4%B9%A0/5%E4%B8%AA%E6%80%AA%E5%BC%82%E8%A1%8C%E4%B8%BA.js)
-<br/>
-
-4. 所有的类都是函数数据类型,所有的实例都是对象类型[但是有特殊性] 
-   ```js
-   console.log(typeof Object); //=>"function"
-   console.log(typeof Array);  //=>"function"
-
-   function sum(){} // => typeof sum ==="function"
-   let arr = [] // => Array实例 -> 数组，对象
-   let n = 10;
-   let m = new Number(10);
-   m.toFixed(2);  // '10.00'
-   n.toFixed(2);  // '10.00' 转为new Number(10)
-   n-10; // 0
-   m-10; // 0  浏览器把对象转成数字
-   ```
 
 
-5. this  
-    ```js
-    var x = 3,
-        obj = {x:5};
-    obj.fn = (function(){
-      this.x *= ++x;
-      return function(y){
-          this.x *= (++x)+y;
-          console.log(x); 
-      }
-    })();
-    var fn = obj.fn;
-    obj.fn(6);
-    fn(4);
-    console.log(obj.x, x); 
-    // 13
-    // 234
-    // 95 234
-    // this.x *= (++x)+y; 后面是整体
-    ```
-6. Hoisting
-    ```js
-    // 1. 
-    fn(); // 5
-    function fn(){console.log(1);}
-    fn(); // 5 
-    function fn(){console.log(2);}
-    fn(); // 5
-    var fn = function(){console.log(3);}
-    fn(); // 3
-    function fn(){console.log(4);}
-    fn(); // 3
-    function fn(){console.log(5);}
-    fn(); // 3
+# 3. Others
 
-    // 2. 
-    var foo = 1;
-    function bar() {
-      if (!foo){
-        var foo = 10;
-      }
-      console.log(foo); // 10
-    }
-    bar();
-    ```
----
+## 3.1. {&& ||}
+    - A && B
+        * 如果第一个操作数是对象，则返回第二个数
+        * 如果第二个操作数是对象，则只有在第一个操作数的求值结果为true的情况下才会返回该对象。
+        * 如果两个操作数都是对象，则返回第二个数操作数。 
+        * 如果有一个操作数是null，则返回null。 
+        * 如果有一个操作数是NaN，则返回NaN。
+        * 如果第一个操作数是undefined，则返回undefined。 
+        * 对于逻辑与，如果第一个操作数是false，无论第二个操作数是什么，结果都不可能再是true。
+    - A || B
+        * 如果第一个操作数是对象，则返第一个操作数
+        * 如果第一个操作数的求值结果为false，则返回第二个操作数
+        * 如果两个操作数都是对象，则返回第一个操作数
+        * 如果两个操作数是null，则返回null
+        * 如果两个操作数是NaN，则返回NaN
+        * 如果两个操作数是undefined，则返回undefined 

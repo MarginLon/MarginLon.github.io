@@ -456,6 +456,7 @@ setTimeout(function(x){
 
 
 ### 2.7.3. 构造函数
+- 初始this，把this指向当前的实例对象。
 ### 2.7.4. 箭头函数 [generator]
 ### 2.7.5. call/apply/bind强制修改this指向
 
@@ -689,10 +690,9 @@ box.onclick = throttle(fn,500);
         - 自定义类（类都是“函数数据类型”）
             + 函数执行的时候基于new执行即可“构造函数执行”
                 - 构造函数 VS 普通函数
-                    1. 构造函数执行，也形成私有context
-                    2. 创建context后，浏览器<span style="color:red">默认创建一个对象实例</span>，把当前Fn函数当作类（”构造函数“）
-                    3. 初始this，把this指向当前的实例对象。
-                    4. 执行完，return时
+                    1. 创建context后，浏览器<span style="color:red">默认创建一个对象实例</span>，把当前Fn函数当作类（”构造函数“）
+                    2. 初始this，把this指向当前的实例对象。
+                    3. 执行完，return时
                         - 没有return/return 基本数据类型值，浏览器默认把创建的实例对象返回
                         - return 引用类型，返回自己的返回值。
             + Fn VS Fn()：

@@ -4,6 +4,7 @@ date: 2020-09-21T10:02:39+08:00
 draft: false
 ---
 - [面试题](#面试题)
+  - [7. hasPubProperty](#7-haspubproperty)
 - [技巧](#技巧)
 # 面试题
 
@@ -85,6 +86,7 @@ draft: false
     }
     bar();
     ```
+  7. hasPubProperty
 ---
 # 技巧
 1. 不“背书”   [场景， low一点]

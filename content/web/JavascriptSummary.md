@@ -8,9 +8,9 @@ draft: false
   - [2.1. {数据类型及转换}](#21-数据类型及转换)
     - [2.1.1. {数据类型}](#211-数据类型)
       - [2.1.1.1. 原始值](#2111-原始值)
-      - [2.1.1.2. 引用类型](#2112-引用类型)
-    - [2.1.2. {类型转换}](#212-类型转换)
-      - [2.1.2.1. typeof/instanceof/.constructor/toString.call](#2121-typeofinstanceofconstructortostringcall)
+      - [2.1.1.2. 对象类型](#2112-对象类型)
+    - [2.1.2. {类型检测&转换}](#212-类型检测转换)
+      - [2.1.2.1. typeof/instanceof/.constructor/toString.call/Array.isArray([value])](#2121-typeofinstanceofconstructortostringcallarrayisarrayvalue)
       - [2.1.2.2. 其他=>Number](#2122-其他number)
       - [2.1.2.3. 其他=>String](#2123-其他string)
       - [2.1.2.4. 其他=>布尔](#2124-其他布尔)
@@ -61,21 +61,42 @@ draft: false
 - Boolean
 - Number
 - String
-- Symbol
+- Symbol 
+  - 1.对象的唯一属性
+    - ```js
+      let key = Symbol();
+      let obj = {
+        [key]:100
+      };
+      console.log(obj[key]);
+
+      let arr = Object.getOwnPropertySymbols(obj);
+      arr.forEach(item=>{
+        console.log(obj[item]);
+      });
+      ```
+  - 2.宏观管理标识：标志唯一性(vuex/redux)
+  - 3.底层原理
+    - Symbol.hasInstance
+    - Symbol.iterator
+    - Symbol.toPrimitive
+    - Symbol.toStringTag
+    - ...
 - Bigint
 <br/>
 
-#### 2.1.1.2. 引用类型
+#### 2.1.1.2. 对象类型
 <br/>
 
-- 对象/函数（基于构造函数创造的实例）
-  - 对象
-    - 普通、数组、正则
-    - 类数组对象
-    - prototype
-    - 实例对象
-    - 函数对象
-  - 函数
+  - 标准普通对象 object
+  - 标准特殊对象 Array/RegExp/Date/Error/Math/ArrayBuffer/DataView/Set/Map...
+  - 非标准特殊对象 Number/String/Boolean/Symbol/BigInt/... 基于构造函数[Object]创造出来的原始值对象类型
+    - ```js
+      new Symbol() // TypeError
+      new BigInt() // TypeError: Not a constructor
+      Object(Symbol()) // pass 
+      ```
+  - 可调用对象 [实现了call方法] function
     - 普通
     - 构造[内置，自定义]
     - 生成器
@@ -84,27 +105,31 @@ draft: false
 
 <br/>
 
-### 2.1.2. {类型转换}
+### 2.1.2. {类型检测&转换}
 <br/>
 
-#### 2.1.2.1. typeof/instanceof/.constructor/toString.call
+#### 2.1.2.1. typeof/instanceof/.constructor/toString.call/Array.isArray([value])
 <br/>
 
-- 返回字符串
-- null -> 'object'
-- 实现CALL的对象[函数、箭头函数、生成器函数、构造函数] -> 'function'
-- 未实现CALL的对象 -> 'object'
-- [example] instanceof [class]
-- [example].constructor===[class]
+- typeof 运算符
+  - 返回字符串
+  - null -> 'object'
+  - 实现CALL的对象[函数、箭头函数、生成器函数、构造函数] -> 'function'
+  - 未实现CALL的对象 -> 'object'
+  - 未声明的变量 -> 'undefined'
+- [example] instanceof [class]  实例是否属于类
+- [example].constructor===[class] 获取构造函数
 - Object.prototype.toString.call([val])
+
 <br/>
 
 #### 2.1.2.2. 其他=>Number
-<br/>
+<br/> 
 
 - Number([val])
   - 隐式转换的调用方法（如```isNaN()```）
-  - 出现非有效数字字符即为```NaN```
+  - 出现非有效数字字符即为```NaN```，空串为0
+  - Symbol->报错
 - parseInt/parseFloat([val],[radix])
   - [val] 必须是一个字符串，否则隐式转换
   - [radix] 不设置或为0，按照10处理，若字符串'0x'开头，按照16处理
@@ -118,8 +143,9 @@ draft: false
 
 #### 2.1.2.3. 其他=>String
 <br/>
-
-- toString()
+- 规则：
+  - 原始值引号包含
+- toString() [排除Object.prototype.toString]
     - 普通对象{} => 'object Object'
 - String([val])
 - 隐式转换
@@ -130,13 +156,17 @@ draft: false
 #### 2.1.2.4. 其他=>布尔
 <br/>
 
+- 规则:
+  - 只有"0, NaN, Null, Undefined, 空字符串"为False
 - !
 - !!
 - Boolean([val])
+- A||B  A&&B
 - 隐式转换
   - 循环或条件判断的结果
-- 规则:
-  - 只有"0, NaN, Null, Undefined, 空字符串"为False
+
+
+
 <br/>
 
 #### 2.1.2.5. ==的规则
@@ -166,8 +196,8 @@ draft: false
 
 - "+"
   - {} + 0 左边{}视为代码块 // +0 => 0
-  - ({} + 0) "[object Object]0"
-  - 0 + {} "0[object Object]"
+  - ({} + 0)  // "[object Object]0"
+  - 0 + {} // "0[object Object]"
 - 模板字符串实现的是字符串拼接，对象转换为字符串，其余数学运算，对象=>数字
 <br/>
 

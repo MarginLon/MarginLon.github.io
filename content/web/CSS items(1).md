@@ -13,19 +13,7 @@ draft: false
 ### Q&A
 2. CSS实际工作：
 
-    ![HowCSSWork](https://github.com/MarginLon/MarginPostImage/blob/master/HowCSSWork.png?raw=true)
 
-    1.浏览器加载HTML
-
-    2.HTML->DOM
-
-    3.浏览器获取HTML链接的大多数资源，包括CSS
-
-    4.解析CSS，选择器类型将不同规则分类为不同的“存储桶”（渲染树）
-
-    5.将渲染树放置在规则应用到其后应出现的结构中。
-
-    6.页面的视觉显示（绘画）
 
 
 3. 选择器

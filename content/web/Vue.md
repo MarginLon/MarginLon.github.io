@@ -7,6 +7,7 @@ draft: false
 - [2. 基础知识整理](#2-基础知识整理)
   - [2.1 安装](#21-安装)
   - [2.2 v-指令](#22-v-指令)
+  - [2.3 钩子](#23-钩子)
 - [3. 面试题整理](#3-面试题整理)
 ---
 ---
@@ -21,7 +22,9 @@ draft: false
 
   ```
     npm install -g @vue/cli  
+    npm run serve
   ```
+--  
 ## 2.2 v-指令
   - v-model 双向
   - v-html
@@ -33,4 +36,9 @@ draft: false
   - v-show
   - v-bind 处理行内属性，对class和style加强
   - v-on 处理事件
+
+--
+
+## 2.3 钩子
+![钩子周期](https://cn.vuejs.org/images/lifecycle.png)
 # 3. 面试题整理

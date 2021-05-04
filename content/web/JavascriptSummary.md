@@ -38,6 +38,8 @@ draft: false
   - [2.10. {防抖&节流}](#210-防抖节流)
   - [2.11. {面向对象编程}](#211-面向对象编程)
   - [2.12. {原型&原型链}](#212-原型原型链)
+  - [2.13. {DOM}](#213-dom)
+  - [2.14. {浏览器模型}](#214-浏览器模型)
 - [3. Others](#3-others)
   - [3.1. {&& ||}](#31--)
 ---
@@ -375,6 +377,7 @@ draft: false
         + 不加var：全局
         + ![var](https://github.com/MarginLon/MarginPostImage/blob/master/var%E5%8F%98%E9%87%8F.png?raw=true)
     - 暂时性死区（基于typeof检测一个未被声明的变量，不会报错，结果是'undefined'）
+        - 只要块级作用域内存在let命令，它所声明的变量就“绑定”（binding）这个区域，不再受外部的影响。
         + ```js
           console.log(typeof n);//undefined
           let n = 12;//使上一句报错 
@@ -776,9 +779,30 @@ box.onclick = throttle(fn,500);
     * f1.\_\_proto\_\_.say
       * 跳过私有的，找所属类原型的公有属性方法
       * Fn.prototype.say   
+
 ---
+## 2.13. {DOM}
+- 基本类型
+  1. <font color="00cdcd">Document</font>
+  2. <font color="00cdcd">DocumentType</font>:doctype标签
+  3. <font color="00cdcd">Element</font>:H5标签
+  4. <font color="00cdcd">Attr</font>:元素的属性
+  5. <font color="00cdcd">Text</font>:标签内文本
+  6. <font color="00cdcd">Comment</font>:注释
+  7. <font color="00cdcd">DocumentFragment</font>:文档片段
+- 获取方法
+  1. <font color="00cdcd">document.getElementById()</font>:基于元素ID
+  2. <font color="00cdcd">[context].getElementByTagName()</font>:基于标签名,获取集合
+  3. <font color="00cdcd">[context].getElementByClassName()</font>:基于类名，获取集合
+  4. <font color="00cdcd">document.getElementByName()</font>:基于NAME属性值，一般只用于表单（IE只认表单的NAME）
+  5. <font color="00cdcd">document.head/document.body/document.documentElement</font>
+  6. <font color="00ffff">[context].querySelector([selector])</font>
+  7. <font color="00ffff">[context].querySelectorAll([selector])</font>
+   
+---
+## 2.14. {浏览器模型}
 
-
+---
 # 3. Others
 
 ## 3.1. {&& ||}

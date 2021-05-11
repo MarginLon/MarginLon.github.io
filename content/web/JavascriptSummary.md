@@ -798,6 +798,27 @@ box.onclick = throttle(fn,500);
   5. <font color="00cdcd">document.head/document.body/document.documentElement</font>
   6. <font color="00ffff">[context].querySelector([selector])</font>
   7. <font color="00ffff">[context].querySelectorAll([selector])</font>
+- 关系属性
+  + 类型 
+    + Node
+    + NodeList(ByTagName/ByClassName/querySelectorAll)   
+  + nodeType:元素1/属性2/文本3/注释8/文档9
+  + nodeName:
+  + nodeValue:
+  + childNodes:获得所有子节点
+  + children:获得所有元素子节点
+  + firstChild/lastChild:
+  + firstElementChild/lastElementChild:
+  + previousSibling/nextSibing:
+  + previousElementSibling/nextElementSibling:
+- 增删改
+  - createElement
+  - createTextNode
+  - appendChild
+  - insertBefore
+  - cloneNode: true|false
+  - removeChild
+  - setAttribute
    
 ---
 ## 2.14. {浏览器模型}

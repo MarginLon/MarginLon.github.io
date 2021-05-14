@@ -33,6 +33,7 @@ draft: false
   - [选择器](#选择器)
     - [CSS3选择器](#css3选择器)
 - [CSS预处理器](#css预处理器)
+  - [- stylus](#--stylus)
 - [CSS工程化模块化](#css工程化模块化)
 - [布局](#布局)
   - [布局模型](#布局模型)
@@ -374,30 +375,52 @@ div {
    + 继承:inherit initial unset
 
 ### CSS3选择器
-- E~F E+F
-- E[attr^="val"]:以val开头
-- E[attr$="val"]:以val结尾
-- E[attr*="val"]：包含val
-- E:root 设置html
-- E:nth-child(n) 第n个子元素
-- E:nth-last-child(n)
-- E:nth-of-type() 
-- E:nth-last-of-type(n)
-- E:last-child
-- E:first-of-type
-- E:last-of-type
-- E:first-of-type
-- E:only-child
-- E:only-of-type
-- E:empty
-- E:target
-- E:not(s)
-- E:enabled & E:disabled
-- E:checked
+- 选择器
+  - E~F E+F
+  - E[attr^="val"]:以val开头
+  - E[attr$="val"]:以val结尾
+  - E[attr*="val"]：包含val
+  - E:root 设置html
+  - E:nth-child(n) 第n个子元素
+  - E:nth-last-child(n)
+  - E:nth-of-type() 
+  - E:nth-last-of-type(n)
+  - E:last-child
+  - E:first-of-type
+  - E:last-of-type
+  - E:first-of-type
+  - E:only-child
+  - E:only-of-type
+  - E:empty
+  - E:target
+  - E:not(s)
+  - E:enabled & E:disabled
+  - E:checked
+- 伪元素
+  - ::
+  - ::after 
+    - ```css
+      <!-- 清除浮动 -->
+      .clearfix::after{
+        content:'';
+        display:block;
+        clear:both;
+      }
+      ``` 
 
 ---
 # CSS预处理器
-
+- less
+- sass
+  - Variable
+    - !global
+    - !default
+  - mixins
+    - @mixin
+    - @include
+  - extend
+    - @extend selector
+- stylus
 ---
 # CSS工程化模块化
 
@@ -513,5 +536,29 @@ p {
 ---
 
 # 面试相关
+- 选择器:
+  - css3新增选择器 新增伪类 优先级
+    - 选择器：  
+      - E~F E+F
+      - E[attr^="val"]:以val开头
+      - E[attr$="val"]:以val结尾
+      - E[attr*="val"]：包含val
+    - 伪类：-child -of-type
+    - 选择器规则:  
+       + 层叠：两个规则，后者胜出
 
+       + 优先级：!important>内联>id>类>元素>*>继承>默认
+
+       + 继承:inherited:字体 文本 可见性 列表 声音 initial unset
+  - 伪类伪元素区别
+    - 伪类操作dom树中已有的元素，伪元素创建dom树外的元素。
+    - 语法:和::。
+    - 可以使用多个伪类，但同时只能使用1个伪元素。
+    - 伪类弥补常规选择器的不足，便于获取用户操作等额外信息，伪元素创建了一个有内容的虚拟容器。
+  - 属性继承 
+    - inherited:字体 文本 可见性 列表 声音
+  - 浏览器解析选择器
+  - ```css
+    :not() <!-- 权重：0，()内权重取决于内容 -->
+    ``` 
 ---
